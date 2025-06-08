@@ -6,7 +6,9 @@ public class Parrot {
     private final int numberOfCoconuts;
     private final double voltage;
     private final boolean isNailed;
-    private final double BASE_SPEED = 12.0;
+    private static final double BASE_SPEED = 12.0;
+    private static final double MAX_NORWEGIAN_SPEED = 24.0;
+    private static final double LOAD_FACTOR = 9.0;
 
     public Parrot(ParrotTypeEnum type, int numberOfCoconuts, double voltage, boolean isNailed) {
         this.type = type;
@@ -17,34 +19,28 @@ public class Parrot {
 
     public double getSpeed() {
         return switch (type) {
-            case EUROPEAN -> getEuropeanParrotSpeed();
-            case AFRICAN -> getAfricanParrotSpeed();
-            case NORWEGIAN_BLUE -> getNorwegianBlueParrotSpeed();
+            case EUROPEAN -> getEuropeanSpeed();
+            case AFRICAN -> getAfricanSpeed();
+            case NORWEGIAN_BLUE -> getNorwegianBlueSpeed();
             default -> throw new RuntimeException("Unknown parrot type");
         };
     }
 
-    private double getEuropeanParrotSpeed() {
-        return this.BASE_SPEED;
+    private double getEuropeanSpeed() {
+        return BASE_SPEED;
     }
 
-    private double getAfricanParrotSpeed() {
-        return Math.max(0, this.BASE_SPEED - this.getloadPenalty());
+    private double getAfricanSpeed() {
+        double loadPenalty = LOAD_FACTOR * numberOfCoconuts;
+        double adjustedSpeed = BASE_SPEED - loadPenalty;
+        return Math.max(0, adjustedSpeed);
     }
 
-    private double getNorwegianBlueParrotSpeed() {
+    private double getNorwegianBlueSpeed() {
         if (isNailed) return 0;
-        double MAX_SPEED = 24.0;
-        return Math.min(MAX_SPEED, getVoltageAdjustedSpeed());
-    }
 
-    private double getloadPenalty() {
-        double LOAD_FACTOR = 9.0;
-        return LOAD_FACTOR * this.numberOfCoconuts;
-    }
-
-    private double getVoltageAdjustedSpeed() {
-        return this.voltage * this.BASE_SPEED;
+        double voltageAdjustedSpeed = voltage * BASE_SPEED;
+        return Math.min(MAX_NORWEGIAN_SPEED, voltageAdjustedSpeed);
     }
 
     public String getCry() {

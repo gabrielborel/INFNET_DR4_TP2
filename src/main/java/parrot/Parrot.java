@@ -6,6 +6,7 @@ public class Parrot {
     private final int numberOfCoconuts;
     private final double voltage;
     private final boolean isNailed;
+    private final double BASE_SPEED = 12.0;
 
     public Parrot(ParrotTypeEnum type, int numberOfCoconuts, double voltage, boolean isNailed) {
         this.type = type;
@@ -16,22 +17,34 @@ public class Parrot {
 
     public double getSpeed() {
         return switch (type) {
-            case EUROPEAN -> getBaseSpeed();
-            case AFRICAN -> Math.max(0, getBaseSpeed() - getLoadFactor() * numberOfCoconuts);
-            case NORWEGIAN_BLUE -> (isNailed) ? 0 : getBaseSpeed(voltage);
+            case EUROPEAN -> getEuropeanParrotSpeed();
+            case AFRICAN -> getAfricanParrotSpeed();
+            case NORWEGIAN_BLUE -> getNorwegianBlueParrotSpeed();
+            default -> throw new RuntimeException("Unknown parrot type");
         };
     }
 
-    private double getBaseSpeed(double voltage) {
-        return Math.min(24.0, voltage * getBaseSpeed());
+    private double getEuropeanParrotSpeed() {
+        return this.BASE_SPEED;
     }
 
-    private double getLoadFactor() {
-        return 9.0;
+    private double getAfricanParrotSpeed() {
+        return Math.max(0, this.BASE_SPEED - this.getloadPenalty());
     }
 
-    private double getBaseSpeed() {
-        return 12.0;
+    private double getNorwegianBlueParrotSpeed() {
+        if (isNailed) return 0;
+        double MAX_SPEED = 24.0;
+        return Math.min(MAX_SPEED, getVoltageAdjustedSpeed());
+    }
+
+    private double getloadPenalty() {
+        double LOAD_FACTOR = 9.0;
+        return LOAD_FACTOR * this.numberOfCoconuts;
+    }
+
+    private double getVoltageAdjustedSpeed() {
+        return this.voltage * this.BASE_SPEED;
     }
 
     public String getCry() {

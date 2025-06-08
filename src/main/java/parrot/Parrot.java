@@ -1,20 +1,15 @@
 package parrot;
 
 public class Parrot {
-
     private final ParrotTypeEnum type;
-    private final int numberOfCoconuts;
-    private final double voltage;
-    private final boolean isNailed;
+    private final ParrotAttributes attributes;
     private static final double BASE_SPEED = 12.0;
     private static final double MAX_NORWEGIAN_SPEED = 24.0;
     private static final double LOAD_FACTOR = 9.0;
 
-    public Parrot(ParrotTypeEnum type, int numberOfCoconuts, double voltage, boolean isNailed) {
+    public Parrot(ParrotTypeEnum type, ParrotAttributes attributes) {
         this.type = type;
-        this.numberOfCoconuts = numberOfCoconuts;
-        this.voltage = voltage;
-        this.isNailed = isNailed;
+        this.attributes = attributes;
     }
 
     public double getSpeed() {
@@ -31,15 +26,15 @@ public class Parrot {
     }
 
     private double getAfricanSpeed() {
-        double loadPenalty = LOAD_FACTOR * numberOfCoconuts;
+        double loadPenalty = LOAD_FACTOR * attributes.getNumberOfCoconuts();
         double adjustedSpeed = BASE_SPEED - loadPenalty;
         return Math.max(0, adjustedSpeed);
     }
 
     private double getNorwegianBlueSpeed() {
-        if (isNailed) return 0;
+        if (attributes.isNailed()) return 0;
 
-        double voltageAdjustedSpeed = voltage * BASE_SPEED;
+        double voltageAdjustedSpeed = attributes.getVoltage() * BASE_SPEED;
         return Math.min(MAX_NORWEGIAN_SPEED, voltageAdjustedSpeed);
     }
 
@@ -47,7 +42,7 @@ public class Parrot {
         return switch (type) {
             case EUROPEAN -> "Sqoork!";
             case AFRICAN -> "Sqaark!";
-            case NORWEGIAN_BLUE -> voltage > 0 ? "Bzzzzzz" : "...";
+            case NORWEGIAN_BLUE -> attributes.getVoltage() > 0 ? "Bzzzzzz" : "...";
         };
     }
 }
